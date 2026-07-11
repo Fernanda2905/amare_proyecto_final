@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asistente AMARÉ | Próximamente</title>
+  <meta name="description" content="Asistente virtual AMARÉ para recomendar paquetes y eventos personalizados." />
+  <link rel="preconnect" href="https://images.unsplash.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a href="index.html" class="brand">
+      <span class="brand-mark">A</span>
+      <span class="brand-text">AMARÉ</span>
+    </a>
+    <button class="menu-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+    <nav class="main-nav">
+      <a href="index.html">Inicio</a>
+      <a href="servicios.html">Servicios</a>
+      <a href="experiencias.html">Experiencias</a>
+      <a href="cotiza.html">Cotiza</a>
+      <a class="active" href="chatbot.html">Asistente</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <p class="eyebrow reveal">Próximamente</p>
+      <h1 class="reveal">Asistente AMARÉ para crear eventos personalizados.</h1>
+      <p class="reveal">Esta página queda lista para integrar un chatbot después. Por ahora tendrá una simulación visual funcional.</p>
+    </section>
+
+    <section class="section chatbot-layout">
+      <div class="chat-panel reveal">
+        <div class="chat-header">
+          <span class="brand-mark small">A</span>
+          <div>
+            <h2>Asistente AMARÉ</h2>
+            <p>Simulación inicial</p>
+          </div>
+        </div>
+
+        <div class="chat-window" id="chatWindow">
+          <div class="message bot">Hola, soy el asistente AMARÉ. Cuéntame qué evento quieres organizar.</div>
+        </div>
+
+        <form class="chat-form" id="demoChatForm">
+          <input id="chatInput" type="text" placeholder="Ej. Quiero un cumpleaños elegante para 30 personas..." required>
+          <button type="submit">Enviar</button>
+        </form>
+      </div>
+
+      <div class="chat-info reveal">
+        <p class="eyebrow">Futuro chatbot</p>
+        <h2>¿Qué hará después?</h2>
+        <ul class="check-list">
+          <li>Preguntará tipo de evento, estilo, invitados y presupuesto.</li>
+          <li>Recomendará paquetes predeterminados.</li>
+          <li>Creará ideas personalizadas según el contexto del cliente.</li>
+          <li>Podrá enviar el resumen por WhatsApp o guardarlo en una base de datos.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div><h2>AMARÉ</h2><p>El asistente todavía no reemplaza el toque humano. Tranquilos, no le daremos una pistola de silicón.</p></div>
+    <div><p>Por ahora</p><a href="cotiza.html">Cotiza aquí</a></div>
+  </footer>
+
+  <a class="whatsapp-float" href="https://wa.me/593999999999?text=Hola%20AMAR%C3%89%2C%20quiero%20informaci%C3%B3n%20sobre%20eventos." target="_blank">WhatsApp</a>
+  <script src="js/script.js"></script>
+</body>
+</html>
