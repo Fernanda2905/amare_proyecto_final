@@ -4,13 +4,16 @@ const btnRecargar = document.getElementById("btnRecargar");
 
 const serviciosBody = document.getElementById("serviciosBody");
 const paquetesBody = document.getElementById("paquetesBody");
+const galeriaBody = document.getElementById("galeriaBody");
 const solicitudesBody = document.getElementById("solicitudesBody");
 
 const servicioForm = document.getElementById("servicioForm");
 const paqueteForm = document.getElementById("paqueteForm");
+const galeriaForm = document.getElementById("galeriaForm");
 
 let servicios = [];
 let paquetes = [];
+let galeria = [];
 let solicitudes = [];
 
 function money(value) {
@@ -30,7 +33,11 @@ function statusBadge(value) {
 
 async function apiGet(endpoint) {
   const response = await fetch(endpoint);
-  if (!response.ok) throw new Error(`Error al cargar ${endpoint}`);
+
+  if (!response.ok) {
+    throw new Error(`Error al cargar ${endpoint}`);
+  }
+
   return response.json();
 }
 
@@ -84,13 +91,21 @@ async function cargarTodo() {
   await Promise.all([
     cargarServicios(),
     cargarPaquetes(),
+    cargarGaleria(),
     cargarSolicitudes()
   ]);
 }
 
+/* =========================
+   SERVICIOS
+========================= */
+
 async function cargarServicios() {
   try {
-    servicios = await apiGet("/api/servicios");
+    servicios = (await apiGet("/api/servicios")).filter(
+      item => item.nombre_servicio || item.descripcion || item.orden
+    );
+
     renderServicios();
   } catch (error) {
     console.error(error);
@@ -118,8 +133,10 @@ function renderServicios() {
       <td>${money(servicio.precio_base)}</td>
       <td>${statusBadge(servicio.estado)}</td>
       <td>
-        <button class="small editar-servicio" data-id="${servicio.recordId}">Editar</button>
-        <button class="small danger eliminar-servicio" data-id="${servicio.recordId}">Eliminar</button>
+        <div class="row-actions">
+          <button class="small editar-servicio" data-id="${servicio.recordId}">Editar</button>
+          <button class="small danger eliminar-servicio" data-id="${servicio.recordId}">Eliminar</button>
+        </div>
       </td>
     `;
 
@@ -159,10 +176,12 @@ servicioForm.addEventListener("submit", async (event) => {
 
 serviciosBody.addEventListener("click", async (event) => {
   const id = event.target.dataset.id;
+
   if (!id) return;
 
   if (event.target.classList.contains("editar-servicio")) {
     const servicio = servicios.find((item) => item.recordId === id);
+
     if (!servicio) return;
 
     document.getElementById("servicioRecordId").value = servicio.recordId;
@@ -174,11 +193,16 @@ serviciosBody.addEventListener("click", async (event) => {
     document.getElementById("estado_servicio").checked = Boolean(servicio.estado);
 
     document.getElementById("servicioFormTitle").textContent = "Editar servicio";
-    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
   }
 
   if (event.target.classList.contains("eliminar-servicio")) {
     const confirmar = confirm("¿Seguro que deseas eliminar este servicio?");
+
     if (!confirmar) return;
 
     try {
@@ -200,9 +224,16 @@ function limpiarServicioForm() {
 
 document.getElementById("cancelarServicio").addEventListener("click", limpiarServicioForm);
 
+/* =========================
+   PAQUETES
+========================= */
+
 async function cargarPaquetes() {
   try {
-    paquetes = await apiGet("/api/paquetes");
+    paquetes = (await apiGet("/api/paquetes")).filter(
+      item => item.nombre_paquete || item.descripcion || item.orden
+    );
+
     renderPaquetes();
   } catch (error) {
     console.error(error);
@@ -231,8 +262,10 @@ function renderPaquetes() {
       <td>${paquete.destacado ? "Sí" : "No"}</td>
       <td>${statusBadge(paquete.estado)}</td>
       <td>
-        <button class="small editar-paquete" data-id="${paquete.recordId}">Editar</button>
-        <button class="small danger eliminar-paquete" data-id="${paquete.recordId}">Eliminar</button>
+        <div class="row-actions">
+          <button class="small editar-paquete" data-id="${paquete.recordId}">Editar</button>
+          <button class="small danger eliminar-paquete" data-id="${paquete.recordId}">Eliminar</button>
+        </div>
       </td>
     `;
 
@@ -274,10 +307,12 @@ paqueteForm.addEventListener("submit", async (event) => {
 
 paquetesBody.addEventListener("click", async (event) => {
   const id = event.target.dataset.id;
+
   if (!id) return;
 
   if (event.target.classList.contains("editar-paquete")) {
     const paquete = paquetes.find((item) => item.recordId === id);
+
     if (!paquete) return;
 
     document.getElementById("paqueteRecordId").value = paquete.recordId;
@@ -291,11 +326,16 @@ paquetesBody.addEventListener("click", async (event) => {
     document.getElementById("estado_paquete").checked = Boolean(paquete.estado);
 
     document.getElementById("paqueteFormTitle").textContent = "Editar paquete";
-    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
   }
 
   if (event.target.classList.contains("eliminar-paquete")) {
     const confirmar = confirm("¿Seguro que deseas eliminar este paquete?");
+
     if (!confirmar) return;
 
     try {
@@ -317,9 +357,144 @@ function limpiarPaqueteForm() {
 
 document.getElementById("cancelarPaquete").addEventListener("click", limpiarPaqueteForm);
 
+/* =========================
+   GALERÍA
+========================= */
+
+async function cargarGaleria() {
+  try {
+    galeria = (await apiGet("/api/galeria")).filter(
+      item => item.titulo || item.imagen_url || item.orden
+    );
+
+    renderGaleria();
+  } catch (error) {
+    console.error(error);
+    galeriaBody.innerHTML = `<tr><td colspan="5">Error al cargar galería.</td></tr>`;
+  }
+}
+
+function renderGaleria() {
+  galeriaBody.innerHTML = "";
+
+  if (!galeria.length) {
+    galeriaBody.innerHTML = `<tr><td colspan="5">No hay imágenes registradas.</td></tr>`;
+    return;
+  }
+
+  galeria.forEach((imagen) => {
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${cleanText(imagen.orden)}</td>
+      <td>
+        <strong>${cleanText(imagen.titulo)}</strong><br>
+        <small>${cleanText(imagen.imagen_url)}</small>
+      </td>
+      <td>${cleanText(imagen.categoria)}</td>
+      <td>${statusBadge(imagen.estado)}</td>
+      <td>
+        <div class="row-actions">
+          <button class="small editar-galeria" data-id="${imagen.recordId}">Editar</button>
+          <button class="small danger eliminar-galeria" data-id="${imagen.recordId}">Eliminar</button>
+        </div>
+      </td>
+    `;
+
+    galeriaBody.appendChild(tr);
+  });
+}
+
+galeriaForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  const recordId = document.getElementById("galeriaRecordId").value;
+
+  const imagen = {
+    titulo: document.getElementById("titulo_galeria").value.trim(),
+    imagen_url: document.getElementById("imagen_url_galeria").value.trim(),
+    descripcion_alt: document.getElementById("descripcion_alt_galeria").value.trim(),
+    categoria: document.getElementById("categoria_galeria").value.trim(),
+    orden: Number(document.getElementById("orden_galeria").value || 1),
+    estado: document.getElementById("estado_galeria").checked
+  };
+
+  try {
+    if (recordId) {
+      await apiSend(`/api/galeria/${recordId}`, "PATCH", imagen);
+      alert("Imagen actualizada correctamente");
+    } else {
+      await apiSend("/api/galeria", "POST", imagen);
+      alert("Imagen creada correctamente");
+    }
+
+    limpiarGaleriaForm();
+    cargarGaleria();
+  } catch (error) {
+    alert(error.message);
+  }
+});
+
+galeriaBody.addEventListener("click", async (event) => {
+  const id = event.target.dataset.id;
+
+  if (!id) return;
+
+  if (event.target.classList.contains("editar-galeria")) {
+    const imagen = galeria.find((item) => item.recordId === id);
+
+    if (!imagen) return;
+
+    document.getElementById("galeriaRecordId").value = imagen.recordId;
+    document.getElementById("titulo_galeria").value = imagen.titulo || "";
+    document.getElementById("imagen_url_galeria").value = imagen.imagen_url || "";
+    document.getElementById("descripcion_alt_galeria").value = imagen.descripcion_alt || "";
+    document.getElementById("categoria_galeria").value = imagen.categoria || "";
+    document.getElementById("orden_galeria").value = imagen.orden || 1;
+    document.getElementById("estado_galeria").checked = Boolean(imagen.estado);
+
+    document.getElementById("galeriaFormTitle").textContent = "Editar imagen";
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+  if (event.target.classList.contains("eliminar-galeria")) {
+    const confirmar = confirm("¿Seguro que deseas eliminar esta imagen?");
+
+    if (!confirmar) return;
+
+    try {
+      await apiDelete(`/api/galeria/${id}`);
+      alert("Imagen eliminada");
+      cargarGaleria();
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+});
+
+function limpiarGaleriaForm() {
+  galeriaForm.reset();
+  document.getElementById("galeriaRecordId").value = "";
+  document.getElementById("estado_galeria").checked = true;
+  document.getElementById("galeriaFormTitle").textContent = "Nueva imagen";
+}
+
+document.getElementById("cancelarGaleria").addEventListener("click", limpiarGaleriaForm);
+
+/* =========================
+   SOLICITUDES
+========================= */
+
 async function cargarSolicitudes() {
   try {
-    solicitudes = await apiGet("/api/solicitudes");
+    solicitudes = (await apiGet("/api/solicitudes")).filter(
+      item => item.nombre_cliente || item.correo || item.telefono || item.descripcion_evento
+    );
+
     renderSolicitudes();
   } catch (error) {
     console.error(error);
@@ -364,8 +539,10 @@ function renderSolicitudes() {
         </select>
       </td>
       <td>
-        <button class="small guardar-estado" data-id="${solicitud.recordId}">Guardar</button>
-        <button class="small danger eliminar-solicitud" data-id="${solicitud.recordId}">Eliminar</button>
+        <div class="row-actions">
+          <button class="small guardar-estado" data-id="${solicitud.recordId}">Guardar</button>
+          <button class="small danger eliminar-solicitud" data-id="${solicitud.recordId}">Eliminar</button>
+        </div>
       </td>
     `;
 
@@ -375,6 +552,7 @@ function renderSolicitudes() {
 
 solicitudesBody.addEventListener("click", async (event) => {
   const id = event.target.dataset.id;
+
   if (!id) return;
 
   if (event.target.classList.contains("guardar-estado")) {
@@ -395,6 +573,7 @@ solicitudesBody.addEventListener("click", async (event) => {
 
   if (event.target.classList.contains("eliminar-solicitud")) {
     const confirmar = confirm("¿Seguro que deseas eliminar esta solicitud?");
+
     if (!confirmar) return;
 
     try {

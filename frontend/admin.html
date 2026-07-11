@@ -20,6 +20,7 @@
       <nav class="admin-nav">
         <button class="tab-btn active" data-tab="servicios">Servicios</button>
         <button class="tab-btn" data-tab="paquetes">Paquetes</button>
+        <button class="tab-btn" data-tab="galeria">Galería</button>
         <button class="tab-btn" data-tab="solicitudes">Solicitudes</button>
       </nav>
 
@@ -32,9 +33,11 @@
           <p class="eyebrow">Base de datos Airtable</p>
           <h2>Administración de AMARÉ</h2>
         </div>
+
         <button id="btnRecargar" class="secondary">Recargar datos</button>
       </header>
 
+      <!-- SERVICIOS -->
       <section id="servicios" class="tab-section active">
         <div class="section-grid">
           <article class="card">
@@ -78,6 +81,7 @@
 
           <article class="card table-card">
             <h3>Servicios registrados</h3>
+
             <div class="table-wrap">
               <table>
                 <thead>
@@ -90,7 +94,9 @@
                   </tr>
                 </thead>
                 <tbody id="serviciosBody">
-                  <tr><td colspan="5">Cargando...</td></tr>
+                  <tr>
+                    <td colspan="5">Cargando servicios...</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -98,6 +104,7 @@
         </div>
       </section>
 
+      <!-- PAQUETES -->
       <section id="paquetes" class="tab-section">
         <div class="section-grid">
           <article class="card">
@@ -153,6 +160,7 @@
 
           <article class="card table-card">
             <h3>Paquetes registrados</h3>
+
             <div class="table-wrap">
               <table>
                 <thead>
@@ -166,7 +174,9 @@
                   </tr>
                 </thead>
                 <tbody id="paquetesBody">
-                  <tr><td colspan="6">Cargando...</td></tr>
+                  <tr>
+                    <td colspan="6">Cargando paquetes...</td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -174,6 +184,74 @@
         </div>
       </section>
 
+      <!-- GALERÍA -->
+      <section id="galeria" class="tab-section">
+        <div class="section-grid">
+          <article class="card">
+            <h3 id="galeriaFormTitle">Nueva imagen</h3>
+
+            <form id="galeriaForm">
+              <input type="hidden" id="galeriaRecordId" />
+
+              <label>Título</label>
+              <input type="text" id="titulo_galeria" required />
+
+              <label>URL de imagen</label>
+              <input type="url" id="imagen_url_galeria" placeholder="https://..." required />
+
+              <label>Descripción ALT</label>
+              <input type="text" id="descripcion_alt_galeria" placeholder="Ej: Decoración elegante para evento" />
+
+              <div class="two-cols">
+                <div>
+                  <label>Categoría</label>
+                  <input type="text" id="categoria_galeria" placeholder="Ej: Bodas, cumpleaños, inspiración" />
+                </div>
+
+                <div>
+                  <label>Orden</label>
+                  <input type="number" id="orden_galeria" min="1" required />
+                </div>
+              </div>
+
+              <label class="check">
+                <input type="checkbox" id="estado_galeria" checked />
+                Mostrar en la web/app
+              </label>
+
+              <div class="actions">
+                <button type="submit">Guardar imagen</button>
+                <button type="button" class="secondary" id="cancelarGaleria">Cancelar</button>
+              </div>
+            </form>
+          </article>
+
+          <article class="card table-card">
+            <h3>Imágenes registradas</h3>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Orden</th>
+                    <th>Imagen</th>
+                    <th>Categoría</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="galeriaBody">
+                  <tr>
+                    <td colspan="5">Cargando galería...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- SOLICITUDES -->
       <section id="solicitudes" class="tab-section">
         <article class="card table-card full">
           <h3>Solicitudes recibidas</h3>
@@ -194,7 +272,9 @@
                 </tr>
               </thead>
               <tbody id="solicitudesBody">
-                <tr><td colspan="8">Cargando...</td></tr>
+                <tr>
+                  <td colspan="8">Cargando solicitudes...</td>
+                </tr>
               </tbody>
             </table>
           </div>
