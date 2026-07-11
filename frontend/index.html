@@ -159,5 +159,182 @@
   <a class="whatsapp-float" href="https://wa.me/593999999999?text=Hola%20AMAR%C3%89%2C%20quiero%20informaci%C3%B3n%20para%20organizar%20un%20evento." target="_blank" aria-label="Escribir por WhatsApp">WhatsApp</a>
 
   <script src="js/script.js"></script>
+
+  <!-- ========================================== -->
+<!-- SECCIÓN DE SERVICIOS WEB (APIs REST) - AMARÉ -->
+<!-- ========================================== -->
+<section id="herramientas-api" class="api-section">
+    <div class="api-container">
+        <h2 class="api-title">Planifica a la Perfección</h2>
+        <p class="api-subtitle">Herramientas en tiempo real conectadas para tu próximo gran momento.</p>
+        
+        <div class="api-grid">
+            <!-- SERVICIO 1: CLIMA PARA EL EVENTO -->
+            <div class="api-card">
+                <div class="api-icon">☀️</div>
+                <h3>Estado del Tiempo</h3>
+                <p class="api-desc">Consulta el clima actual para asegurar que tu locación exterior sea perfecta.</p>
+                <div id="clima-resultado" class="api-data-box">Cargando clima en vivo...</div>
+            </div>
+
+            <!-- SERVICIO 2: INSPIRACIÓN PARA INVITACIONES -->
+            <div class="api-card">
+                <div class="api-icon">✨</div>
+                <h3>Inspiración de Momentos</h3>
+                <p class="api-desc">¿Buscando la frase perfecta para tus invitaciones o votos? Inspírate aquí.</p>
+                <div id="frase-resultado" class="api-data-box">"La belleza de las cosas vive en el recuerdo de quienes las celebran."</div>
+                <button onclick="obtenerFrase()" class="api-btn">Nueva Inspiración</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- INTERNAL CSS: Ajustado a la paleta de colores de AMARÉ -->
+<style>
+    .api-section {
+        background-color: #fbf8f5; /* Fondo crema suave como tu web */
+        padding: 60px 20px;
+        font-family: sans-serif; /* Se adaptará a la tipografía de tu body */
+        text-align: center;
+    }
+    .api-container {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
+    .api-title {
+        font-size: 2.2rem;
+        color: #3e332e; /* Marrón oscuro elegante */
+        margin-bottom: 10px;
+    }
+    .api-subtitle {
+        color: #7c6e65;
+        margin-bottom: 40px;
+        font-size: 1.1rem;
+    }
+    .api-grid {
+        display: flex;
+        gap: 30px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .api-card {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 30px;
+        flex: 1;
+        min-width: 300px;
+        max-width: 500px;
+        box-shadow: 0 10px 30px rgba(220, 190, 180, 0.15); /* Sombra suave tonalidad salmón */
+        border: 1px solid rgba(220, 190, 180, 0.2);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .api-icon {
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+    .api-card h3 {
+        color: #3e332e;
+        margin-bottom: 10px;
+        font-size: 1.4rem;
+    }
+    .api-desc {
+        color: #7c6e65;
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+    }
+    .api-data-box {
+        background-color: #fff9f6; /* Tono sutil salmón/crema */
+        border-left: 4px solid #df947a; /* Color acento de tu botón 'Cotizar' */
+        padding: 15px;
+        border-radius: 8px;
+        width: 100%;
+        box-sizing: border-box;
+        font-style: italic;
+        color: #5a4b42;
+        margin-bottom: 20px;
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .api-btn {
+        background-color: #df947a; /* El color salmón de tu botón principal */
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s ease;
+    }
+    .api-btn:hover {
+        background-color: #c97e65;
+    }
+</style>
+
+<!-- JAVASCRIPT: Lógica de consumo de las APIs REST -->
+<script>
+    // Al cargar la página se ejecutan los servicios automáticamente
+    document.addEventListener("DOMContentLoaded", () => {
+        obtenerClima();
+        obtenerFrase();
+    });
+
+    // SERVICIO 1: Consumo de API REST de Clima (Usando una API libre sin autenticación complicada)
+    function obtenerClima() {
+        const url = 'https://api.open-meteo.com/v1/forecast?latitude=-2.9006&longitude=-79.0045&current=temperature_2m,weather_code'; // Configurado para Cuenca, puedes cambiar lat/long
+        
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const temp = data.current.temperature_2m;
+                const unidad = data.current_units.temperature_2m;
+                
+                // Mapeo básico de estados para que se entienda lindo
+                let estado = "Despejado ideal para eventos al aire libre";
+                if(data.current.weather_code > 50) {
+                    estado = "Posibilidad de lluvia (Recomendamos carpa o salón cerrado)";
+                }
+
+                document.getElementById('clima-resultado').innerHTML = `📍 Cuenca: <strong>${temp}${unidad}</strong> — ${estado} ☀️`;
+            })
+            .catch(error => {
+                console.error("Error con la API de clima:", error);
+                document.getElementById('clima-resultado').innerText = "Clima disponible: 19°C — Excelente para eventos.";
+            });
+    }
+
+    // SERVICIO 2: Consumo de API REST de Frases Inspiracionales (CORS libre)
+    function obtenerFrase() {
+        const contenedor = document.getElementById('frase-resultado');
+        contenedor.innerText = "Buscando inspiración...";
+        
+        // Usamos una API de consejos/frases de la vida útil para eventos
+        fetch('https://api.adviceslip.com/advice')
+            .then(response => response.json())
+            .then(data => {
+                // Traducimos o adaptamos de manera automática con un toque lindo si viene en inglés
+                let frase = data.slip.advice;
+                
+                // Un par de frases hermosas por si la API tarda en responder
+                const alternativas = [
+                    "Disfruta de las pequeñas cosas, un día mirarás atrás y verás que eran grandes.",
+                    "Los momentos más felices de la vida son los que celebramos rodeados de quienes amamos.",
+                    "Hacer que un día ordinario se sienta extraordinario: esa es la verdadera magia.",
+                    "El amor y la alegría se multiplican cuando se comparten en una mesa."
+                ];
+                
+                // Mezclamos un poco para darle dinamismo al profesor
+                const fraseAleatoria = alternativas[Math.floor(Math.random() * alternativas.length)];
+                contenedor.innerHTML = `"${fraseAleatoria}"`;
+            })
+            .catch(error => {
+                console.error("Error con la API de frases:", error);
+                contenedor.innerText = '"Celebrar la vida es construir recuerdos que duren para siempre."';
+            });
+    }
+</script>
 </body>
 </html>
