@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AMARÉ | Panel administrador</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+  <main class="admin-layout">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">A</div>
+        <div>
+          <h1>AMARÉ</h1>
+          <p>Panel interno</p>
+        </div>
+      </div>
+
+      <nav class="admin-nav">
+        <button class="tab-btn active" data-tab="servicios">Servicios</button>
+        <button class="tab-btn" data-tab="paquetes">Paquetes</button>
+        <button class="tab-btn" data-tab="solicitudes">Solicitudes</button>
+      </nav>
+
+      <a class="back-link" href="index.html">Volver a la web</a>
+    </aside>
+
+    <section class="content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Base de datos Airtable</p>
+          <h2>Administración de AMARÉ</h2>
+        </div>
+        <button id="btnRecargar" class="secondary">Recargar datos</button>
+      </header>
+
+      <section id="servicios" class="tab-section active">
+        <div class="section-grid">
+          <article class="card">
+            <h3 id="servicioFormTitle">Nuevo servicio</h3>
+
+            <form id="servicioForm">
+              <input type="hidden" id="servicioRecordId" />
+
+              <label>Nombre del servicio</label>
+              <input type="text" id="nombre_servicio" required />
+
+              <label>Descripción</label>
+              <textarea id="descripcion_servicio" rows="4" required></textarea>
+
+              <label>URL de imagen</label>
+              <input type="url" id="imagen_url_servicio" placeholder="https://..." />
+
+              <div class="two-cols">
+                <div>
+                  <label>Precio base</label>
+                  <input type="number" id="precio_base_servicio" min="0" step="0.01" required />
+                </div>
+
+                <div>
+                  <label>Orden</label>
+                  <input type="number" id="orden_servicio" min="1" required />
+                </div>
+              </div>
+
+              <label class="check">
+                <input type="checkbox" id="estado_servicio" checked />
+                Mostrar en la web/app
+              </label>
+
+              <div class="actions">
+                <button type="submit">Guardar servicio</button>
+                <button type="button" class="secondary" id="cancelarServicio">Cancelar</button>
+              </div>
+            </form>
+          </article>
+
+          <article class="card table-card">
+            <h3>Servicios registrados</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Orden</th>
+                    <th>Servicio</th>
+                    <th>Precio</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="serviciosBody">
+                  <tr><td colspan="5">Cargando...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="paquetes" class="tab-section">
+        <div class="section-grid">
+          <article class="card">
+            <h3 id="paqueteFormTitle">Nuevo paquete</h3>
+
+            <form id="paqueteForm">
+              <input type="hidden" id="paqueteRecordId" />
+
+              <label>Nombre del paquete</label>
+              <input type="text" id="nombre_paquete" required />
+
+              <label>Descripción</label>
+              <textarea id="descripcion_paquete" rows="4" required></textarea>
+
+              <div class="two-cols">
+                <div>
+                  <label>Precio base</label>
+                  <input type="number" id="precio_base_paquete" min="0" step="0.01" required />
+                </div>
+
+                <div>
+                  <label>Duración estimada</label>
+                  <input type="text" id="duracion_estimada" placeholder="Ej: 3 horas" />
+                </div>
+              </div>
+
+              <label>Características</label>
+              <textarea id="caracteristicas" rows="4" placeholder="Una característica por línea"></textarea>
+
+              <div class="two-cols">
+                <label class="check">
+                  <input type="checkbox" id="destacado" />
+                  Paquete destacado
+                </label>
+
+                <div>
+                  <label>Orden</label>
+                  <input type="number" id="orden_paquete" min="1" required />
+                </div>
+              </div>
+
+              <label class="check">
+                <input type="checkbox" id="estado_paquete" checked />
+                Mostrar en la web/app
+              </label>
+
+              <div class="actions">
+                <button type="submit">Guardar paquete</button>
+                <button type="button" class="secondary" id="cancelarPaquete">Cancelar</button>
+              </div>
+            </form>
+          </article>
+
+          <article class="card table-card">
+            <h3>Paquetes registrados</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Orden</th>
+                    <th>Paquete</th>
+                    <th>Precio</th>
+                    <th>Destacado</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="paquetesBody">
+                  <tr><td colspan="6">Cargando...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="solicitudes" class="tab-section">
+        <article class="card table-card full">
+          <h3>Solicitudes recibidas</h3>
+          <p class="note">Aquí se verán las solicitudes enviadas desde la página de cotización.</p>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Cliente</th>
+                  <th>Contacto</th>
+                  <th>Evento</th>
+                  <th>Fecha</th>
+                  <th>Presupuesto</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="solicitudesBody">
+                <tr><td colspan="8">Cargando...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
