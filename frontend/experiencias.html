@@ -35,46 +35,13 @@
       <p class="reveal">Aquí puedes partir de una idea lista o pedir una experiencia totalmente personalizada.</p>
     </section>
 
-    <section class="section packages-detail">
-      <article class="detail-card reveal">
-        <span>Paquete 01</span>
-        <h2>Esencial</h2>
-        <p>Una propuesta íntima y delicada para eventos pequeños.</p>
-        <ul>
-          <li>Concepto visual base</li>
-          <li>Decoración principal</li>
-          <li>Paleta de color</li>
-          <li>Lista de detalles sugeridos</li>
-        </ul>
-        <a class="btn secondary package-btn" href="cotiza.html" data-package="Esencial">Quiero este paquete</a>
-      </article>
-
-      <article class="detail-card highlighted reveal">
-        <span>Paquete 02</span>
-        <h2>Encanto</h2>
-        <p>Para celebraciones con más presencia visual y acompañamiento.</p>
-        <ul>
-          <li>Diseño de experiencia</li>
-          <li>Decoración y mesa principal</li>
-          <li>Coordinación de detalles</li>
-          <li>Propuesta de proveedores</li>
-        </ul>
-        <a class="btn primary package-btn" href="cotiza.html" data-package="Encanto">Quiero este paquete</a>
-      </article>
-
-      <article class="detail-card reveal">
-        <span>Paquete 03</span>
-        <h2>AMARÉ Total</h2>
-        <p>Organización completa para delegar el evento sin perder tu estilo.</p>
-        <ul>
-          <li>Planificación completa</li>
-          <li>Proveedores y cronograma</li>
-          <li>Diseño visual integral</li>
-          <li>Seguimiento previo al evento</li>
-        </ul>
-        <a class="btn secondary package-btn" href="cotiza.html" data-package="AMARÉ Total">Quiero este paquete</a>
-      </article>
-    </section>
+    <section class="section packages-detail" id="paquetesDinamicos">
+  <article class="detail-card reveal visible">
+    <span>Paquetes</span>
+    <h2>Cargando paquetes...</h2>
+    <p>Estamos obteniendo la información desde la base de datos.</p>
+  </article>
+</section>
 
     <section class="section custom-experience">
       <div class="custom-box reveal">
@@ -94,14 +61,9 @@
         <h2>Referencias visuales para imaginar tu evento.</h2>
       </div>
 
-      <div class="gallery-page-grid reveal">
-        <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?auto=format&fit=crop&w=700&q=80" alt="Mesa decorada para evento">
-        <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=700&q=80" alt="Decoración de boda">
-        <img src="https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=700&q=80" alt="Pastel de evento">
-        <img src="https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=700&q=80" alt="Copas rosadas de celebración">
-        <img src="https://images.unsplash.com/photo-1478146896981-b80fe463b330?auto=format&fit=crop&w=700&q=80" alt="Invitación elegante">
-        <img src="https://images.unsplash.com/photo-1505236858219-8359eb29e329?auto=format&fit=crop&w=700&q=80" alt="Mesa de cena elegante">
-      </div>
+      <div class="gallery-page-grid reveal visible" id="galeriaDinamica">
+  <p>Cargando galería...</p>
+</div>
     </section>
   </main>
 
@@ -111,6 +73,7 @@
   </footer>
 
   <a class="whatsapp-float" href="https://wa.me/593999999999?text=Hola%20AMAR%C3%89%2C%20quiero%20cotizar%20una%20experiencia." target="_blank">WhatsApp</a>
+ <script src="js/public-experiencias.js"></script>
   <script src="js/script.js"></script>
 </body>
 </html>

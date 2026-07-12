@@ -880,3 +880,8 @@ textarea:focus {
   font-weight: 800;
   color: var(--coral);
 }
+.package-price {
+  margin: 14px 0;
+  font-weight: 800;
+  color: #8b6f68;
+}
