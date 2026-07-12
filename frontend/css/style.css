@@ -875,3 +875,8 @@ textarea:focus {
     bottom: 14px;
   }
 }
+.service-price {
+  margin-top: 18px;
+  font-weight: 800;
+  color: var(--coral);
+}
