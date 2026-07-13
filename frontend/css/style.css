@@ -885,3 +885,37 @@ textarea:focus {
   font-weight: 800;
   color: #8b6f68;
 }
+.form-status {
+  margin: 6px 0 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.form-status.info {
+  color: #495867;
+}
+
+.form-status.success {
+  color: #2f7d4f;
+}
+
+.form-status.error {
+  color: #9b3d3d;
+}
+.form-status {
+  margin: 6px 0 0;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.form-status.info {
+  color: #495867;
+}
+
+.form-status.success {
+  color: #2f7d4f;
+}
+
+.form-status.error {
+  color: #9b3d3d;
+}

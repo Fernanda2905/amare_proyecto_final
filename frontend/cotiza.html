@@ -5,19 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cotiza tu evento | AMARÉ</title>
   <meta name="description" content="Cotiza tu evento con AMARÉ. Cuéntanos tu idea y recibe una propuesta personalizada." />
+
   <link rel="preconnect" href="https://images.unsplash.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
 </head>
+
 <body>
   <header class="site-header">
     <a href="index.html" class="brand">
       <span class="brand-mark">A</span>
       <span class="brand-text">AMARÉ</span>
     </a>
-    <button class="menu-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+
+    <button class="menu-toggle" aria-label="Abrir menú">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
     <nav class="main-nav">
       <a href="index.html">Inicio</a>
       <a href="servicios.html">Servicios</a>
@@ -32,37 +41,45 @@
     <section class="page-hero">
       <p class="eyebrow reveal">Cotización</p>
       <h1 class="reveal">Cuéntanos tu idea y la convertimos en una experiencia.</h1>
-      <p class="reveal">Este formulario arma un mensaje automático para WhatsApp. Luego podrás conectar esto con un chatbot o una base de datos.</p>
+      <p class="reveal">
+        Completa este formulario y AMARÉ guardará tu solicitud para revisarla.
+        Luego podrás continuar la conversación por WhatsApp.
+      </p>
     </section>
 
     <section class="section quote-layout">
       <form class="quote-form reveal" id="quoteForm">
         <div class="form-row">
-          <label for="name">Nombre</label>
-          <input id="name" name="name" type="text" placeholder="Ej. Isabella" required>
+          <label for="name">Nombre completo</label>
+          <input id="name" name="name" type="text" placeholder="Ej. Isabella Martínez" required>
         </div>
 
-        <div class="form-row">
-          <label for="eventType">Tipo de evento</label>
-          <select id="eventType" name="eventType" required>
-            <option value="">Selecciona una opción</option>
-            <option>Cumpleaños</option>
-            <option>Boda</option>
-            <option>Baby shower</option>
-            <option>Aniversario</option>
-            <option>Evento corporativo</option>
-            <option>Experiencia personalizada</option>
-          </select>
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="email">Correo</label>
+            <input id="email" name="email" type="email" placeholder="Ej. correo@email.com" required>
+          </div>
+
+          <div class="form-row">
+            <label for="phone">Teléfono</label>
+            <input id="phone" name="phone" type="tel" placeholder="Ej. 0958892936" required>
+          </div>
         </div>
 
-        <div class="form-row">
-          <label for="package">Paquete de interés</label>
-          <select id="package" name="package">
-            <option value="Personalizado">Personalizado / Quiero contar mi idea</option>
-            <option>Esencial</option>
-            <option>Encanto</option>
-            <option>AMARÉ Total</option>
-          </select>
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="eventType">Tipo de evento</label>
+            <select id="eventType" name="eventType" required>
+              <option value="">Cargando tipos de evento...</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="package">Paquete de interés</label>
+            <select id="package" name="package" required>
+              <option value="Personalizado">Personalizado / Quiero contar mi idea</option>
+            </select>
+          </div>
         </div>
 
         <div class="form-grid">
@@ -70,6 +87,7 @@
             <label for="date">Fecha estimada</label>
             <input id="date" name="date" type="date">
           </div>
+
           <div class="form-row">
             <label for="guests">Invitados</label>
             <input id="guests" name="guests" type="number" min="1" placeholder="Ej. 40">
@@ -78,12 +96,12 @@
 
         <div class="form-row">
           <label for="budget">Presupuesto aproximado</label>
-          <select id="budget" name="budget">
+          <select id="budget" name="budget" required>
             <option value="No definido">Aún no lo tengo definido</option>
-            <option>$100 - $250</option>
-            <option>$250 - $500</option>
-            <option>$500 - $1000</option>
-            <option>Más de $1000</option>
+            <option value="$100 - $250">$100 - $250</option>
+            <option value="$250 - $500">$250 - $500</option>
+            <option value="$500 - $1000">$500 - $1000</option>
+            <option value="Más de $1000">Más de $1000</option>
           </select>
         </div>
 
@@ -92,26 +110,48 @@
           <textarea id="details" name="details" rows="6" placeholder="Ej. Quiero un cumpleaños elegante, tonos rosados, con flores, mesa dulce y algo íntimo para mi mamá." required></textarea>
         </div>
 
-        <button class="btn primary full" type="submit">Enviar por WhatsApp</button>
-        <p class="form-note">Número provisional: +593 99 999 9999. Luego lo cambiamos por el oficial.</p>
+        <p id="quoteStatus" class="form-status"></p>
+
+        <button class="btn primary full" type="submit">
+          Guardar solicitud y enviar por WhatsApp
+        </button>
+
+        <p class="form-note">
+          También puedes escribirnos directo al +593 95 889 2936.
+        </p>
       </form>
 
       <aside class="quote-aside reveal">
         <img src="https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&fit=crop&w=900&q=80" alt="Pastel floral para evento">
+
         <div class="aside-card">
           <h2>Próximo paso</h2>
-          <p>AMARÉ revisará tu idea y preparará una propuesta con concepto, servicios sugeridos y detalles clave.</p>
+          <p>
+            AMARÉ revisará tu idea y preparará una propuesta con concepto,
+            servicios sugeridos y detalles clave.
+          </p>
         </div>
       </aside>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div><h2>AMARÉ</h2><p>Cada detalle cuenta. Cada momento importa.</p></div>
-    <div><p>También puedes escribirnos directo</p><a href="contacto.html">Contacto</a></div>
+    <div>
+      <h2>AMARÉ</h2>
+      <p>Cada detalle cuenta. Cada momento importa.</p>
+    </div>
+
+    <div>
+      <p>También puedes escribirnos directo</p>
+      <a href="contacto.html">Contacto</a>
+    </div>
   </footer>
 
-  <a class="whatsapp-float" href="https://wa.me/593999999999?text=Hola%20AMAR%C3%89%2C%20quiero%20cotizar%20un%20evento." target="_blank">WhatsApp</a>
+  <a class="whatsapp-float" href="https://wa.me/593958892936?text=Hola%20AMAR%C3%89%2C%20quiero%20cotizar%20un%20evento." target="_blank">
+    WhatsApp
+  </a>
+
   <script src="js/script.js"></script>
+  <script src="js/public-cotiza.js"></script>
 </body>
 </html>
