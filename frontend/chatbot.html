@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Asistente AMARÉ | Próximamente</title>
-  <meta name="description" content="Asistente virtual AMARÉ para recomendar paquetes y eventos personalizados." />
+  <title>Asistente AMARÉ | Crea tu evento</title>
+  <meta name="description" content="Asistente virtual AMARÉ para orientar eventos y recomendar servicios y paquetes disponibles." />
   <link rel="preconnect" href="https://images.unsplash.com">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/chatbot-ai.css" />
 </head>
 <body>
   <header class="site-header">
@@ -30,9 +31,9 @@
 
   <main>
     <section class="page-hero">
-      <p class="eyebrow reveal">Próximamente</p>
-      <h1 class="reveal">Asistente AMARÉ para crear eventos personalizados.</h1>
-      <p class="reveal">Esta página queda lista para integrar un chatbot después. Por ahora tendrá una simulación visual funcional.</p>
+      <p class="eyebrow reveal">Asistente virtual</p>
+      <h1 class="reveal">Conversemos sobre el evento que tienes en mente.</h1>
+      <p class="reveal">Cuéntanos tu idea y el asistente te orientará usando los servicios, paquetes y tipos de evento disponibles en AMARÉ.</p>
     </section>
 
     <section class="section chatbot-layout">
@@ -41,39 +42,60 @@
           <span class="brand-mark small">A</span>
           <div>
             <h2>Asistente AMARÉ</h2>
-            <p>Simulación inicial</p>
+            <p class="chat-status">En línea · Orientación inicial</p>
           </div>
         </div>
 
-        <div class="chat-window" id="chatWindow">
-          <div class="message bot">Hola, soy el asistente AMARÉ. Cuéntame qué evento quieres organizar.</div>
+        <div
+          class="chat-window"
+          id="aiChatWindow"
+          aria-live="polite"
+          aria-label="Conversación con el asistente AMARÉ"
+        >
+          <div class="message bot">Hola, soy el asistente AMARÉ. Cuéntame qué evento quieres organizar y te ayudaré a encontrar una opción adecuada.</div>
         </div>
 
-        <form class="chat-form" id="demoChatForm">
-          <input id="chatInput" type="text" placeholder="Ej. Quiero un cumpleaños elegante para 30 personas..." required>
-          <button type="submit">Enviar</button>
+        <form class="chat-form" id="aiChatForm">
+          <input
+            id="aiChatInput"
+            type="text"
+            maxlength="1000"
+            autocomplete="off"
+            placeholder="Ej. Quiero un cumpleaños elegante para 30 personas..."
+            required
+          >
+          <button id="aiChatButton" type="submit">Enviar</button>
         </form>
       </div>
 
       <div class="chat-info reveal">
-        <p class="eyebrow">Futuro chatbot</p>
-        <h2>¿Qué hará después?</h2>
+        <p class="eyebrow">¿Cómo te ayuda?</p>
+        <h2>Una primera guía para darle forma a tu evento.</h2>
         <ul class="check-list">
-          <li>Preguntará tipo de evento, estilo, invitados y presupuesto.</li>
-          <li>Recomendará paquetes predeterminados.</li>
-          <li>Creará ideas personalizadas según el contexto del cliente.</li>
-          <li>Podrá enviar el resumen por WhatsApp o guardarlo en una base de datos.</li>
+          <li>Comprende el tipo de evento y el estilo que buscas.</li>
+          <li>Pregunta fecha, invitados, ubicación y presupuesto.</li>
+          <li>Consulta los servicios y paquetes registrados por AMARÉ.</li>
+          <li>Te orienta hacia una cotización o conversación por WhatsApp.</li>
         </ul>
+        <p>Las reservas, disponibilidad y pagos siempre deben ser confirmados por el equipo humano de AMARÉ.</p>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div><h2>AMARÉ</h2><p>El asistente todavía no reemplaza el toque humano. Tranquilos, no le daremos una pistola de silicón.</p></div>
-    <div><p>Por ahora</p><a href="cotiza.html">Cotiza aquí</a></div>
+    <div>
+      <h2>AMARÉ</h2>
+      <p>La tecnología orienta; nuestro equipo convierte tu idea en una experiencia real.</p>
+    </div>
+    <div>
+      <p>¿Ya tienes los detalles?</p>
+      <a href="cotiza.html">Solicita una cotización</a>
+    </div>
   </footer>
 
-  <a class="whatsapp-float" href="https://wa.me/593958892936?text=Hola%20AMAR%C3%89%2C%20quiero%20informaci%C3%B3n%20sobre%20eventos." target="_blank">WhatsApp</a>
+  <a class="whatsapp-float" href="https://wa.me/593958892936?text=Hola%20AMAR%C3%89%2C%20quiero%20informaci%C3%B3n%20sobre%20eventos." target="_blank" rel="noopener">WhatsApp</a>
+
   <script src="js/script.js"></script>
+  <script src="js/chatbot-ai.js"></script>
 </body>
 </html>

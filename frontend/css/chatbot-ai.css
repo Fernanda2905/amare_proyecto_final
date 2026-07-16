@@ -1,0 +1,58 @@
+/* Mejoras específicas del chatbot con IA */
+
+.chat-window {
+  scroll-behavior: smooth;
+}
+
+.message {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.message.loading {
+  align-self: flex-start;
+  background: rgba(231, 214, 193, 0.55);
+  border: 1px solid rgba(74, 62, 54, 0.08);
+  color: rgba(74, 62, 54, 0.7);
+}
+
+.message.loading::after {
+  content: " •••";
+  display: inline-block;
+  animation: amareTyping 1.1s infinite;
+}
+
+.message.error {
+  align-self: flex-start;
+  background: rgba(224, 122, 100, 0.14);
+  border: 1px solid rgba(224, 122, 100, 0.32);
+  color: #8f3e31;
+}
+
+.chat-form button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.chat-form input:disabled {
+  cursor: wait;
+  background: rgba(231, 214, 193, 0.32);
+}
+
+.chat-status {
+  color: var(--olive);
+  font-weight: 700;
+}
+
+@keyframes amareTyping {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+}

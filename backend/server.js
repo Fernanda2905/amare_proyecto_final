@@ -222,6 +222,8 @@ async function listRecords(tableKey, options = {}) {
   return response.data.records.map((record) => mapRecord(record, tableKey));
 }
 
+require("./chatbot")(app, { listRecords });
+
 function createCrudRoutes(routeName, tableKey) {
   app.get(`/api/${routeName}`, async (req, res) => {
     try {
