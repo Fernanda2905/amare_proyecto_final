@@ -1,0 +1,606 @@
+/* =========================================================
+   CHATBOT FLOTANTE AMARÉ
+   Archivo: frontend/css/chatbot-widget.css
+   ========================================================= */
+
+:root {
+  --amare-rose: #d8c3bd;
+  --amare-rose-light: #f2e5e3;
+  --amare-blue: #495867;
+  --amare-white: #ffffff;
+  --amare-text: #3e332e;
+  --amare-muted: #7c6e65;
+  --amare-shadow: 0 18px 50px rgba(73, 88, 103, 0.2);
+}
+
+/* Botón flotante */
+
+.amare-chat-launcher {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 9998;
+
+  width: 64px;
+  height: 64px;
+
+  border: none;
+  border-radius: 50%;
+  background: var(--amare-blue);
+  color: var(--amare-white);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 27px;
+  cursor: pointer;
+
+  box-shadow: 0 14px 35px rgba(73, 88, 103, 0.34);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.amare-chat-launcher:hover {
+  transform: translateY(-4px) scale(1.04);
+  box-shadow: 0 18px 42px rgba(73, 88, 103, 0.42);
+}
+
+.amare-chat-launcher:active {
+  transform: scale(0.96);
+}
+
+.amare-chat-launcher.is-open {
+  background: #3b4855;
+}
+
+/* Ventana principal */
+
+.amare-chat-widget {
+  position: fixed;
+  right: 24px;
+  bottom: 100px;
+  z-index: 9999;
+
+  width: min(390px, calc(100vw - 32px));
+  height: min(610px, calc(100vh - 135px));
+
+  background: var(--amare-white);
+  border: 1px solid rgba(216, 195, 189, 0.65);
+  border-radius: 28px;
+  box-shadow: var(--amare-shadow);
+
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transform: translateY(24px) scale(0.96);
+  transform-origin: bottom right;
+
+  transition:
+    opacity 0.25s ease,
+    visibility 0.25s ease,
+    transform 0.25s ease;
+}
+
+.amare-chat-widget.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+/* Encabezado */
+
+.amare-chat-header {
+  padding: 18px 18px 16px;
+  background:
+    linear-gradient(
+      135deg,
+      var(--amare-blue) 0%,
+      #627383 100%
+    );
+
+  color: var(--amare-white);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.amare-chat-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.amare-chat-avatar {
+  width: 43px;
+  height: 43px;
+  border-radius: 50%;
+
+  background: var(--amare-rose-light);
+  color: var(--amare-blue);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: "Playfair Display", serif;
+  font-size: 21px;
+  font-weight: 700;
+
+  flex-shrink: 0;
+}
+
+.amare-chat-heading {
+  min-width: 0;
+}
+
+.amare-chat-heading h3 {
+  margin: 0 0 3px;
+  color: var(--amare-white);
+
+  font-family: "Playfair Display", serif;
+  font-size: 1.15rem;
+  line-height: 1.2;
+}
+
+.amare-chat-heading p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.82);
+
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.75rem;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.amare-chat-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.amare-chat-status::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #bde5c8;
+  box-shadow: 0 0 0 4px rgba(189, 229, 200, 0.16);
+}
+
+.amare-chat-close {
+  width: 38px;
+  height: 38px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--amare-white);
+
+  font-size: 21px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.amare-chat-close:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: rotate(4deg);
+}
+
+/* Zona de mensajes */
+
+.amare-chat-messages {
+  flex: 1;
+  min-height: 0;
+
+  padding: 18px;
+
+  overflow-y: auto;
+  scroll-behavior: smooth;
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(242, 229, 227, 0.8),
+      transparent 36%
+    ),
+    #fcfaf9;
+
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.amare-chat-messages::-webkit-scrollbar {
+  width: 7px;
+}
+
+.amare-chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.amare-chat-messages::-webkit-scrollbar-thumb {
+  background: rgba(73, 88, 103, 0.22);
+  border-radius: 999px;
+}
+
+/* Mensajes */
+
+.amare-message {
+  max-width: 84%;
+  padding: 12px 14px;
+  border-radius: 19px;
+
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.89rem;
+  line-height: 1.55;
+
+  word-wrap: break-word;
+  animation: amareMessageIn 0.22s ease;
+}
+
+.amare-message p {
+  margin: 0;
+}
+
+.amare-message.bot {
+  align-self: flex-start;
+
+  background: var(--amare-white);
+  color: var(--amare-text);
+
+  border: 1px solid rgba(216, 195, 189, 0.52);
+  border-bottom-left-radius: 7px;
+
+  box-shadow: 0 7px 22px rgba(73, 88, 103, 0.07);
+}
+
+.amare-message.user {
+  align-self: flex-end;
+
+  background: var(--amare-blue);
+  color: #ffffff !important;
+
+  border-bottom-right-radius: 7px;
+}
+.amare-message.user p {
+  color: #ffffff !important;
+}
+
+.amare-message.error {
+  align-self: flex-start;
+
+  background: #fff1f1;
+  color: #8c3434;
+
+  border: 1px solid #f0caca;
+}
+
+/* Indicador escribiendo */
+
+.amare-typing {
+  align-self: flex-start;
+
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  padding: 13px 16px;
+
+  background: var(--amare-white);
+  border: 1px solid rgba(216, 195, 189, 0.52);
+  border-radius: 19px;
+  border-bottom-left-radius: 7px;
+}
+
+.amare-typing span {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+  background: var(--amare-muted);
+
+  animation: amareTyping 1.15s infinite ease-in-out;
+}
+
+.amare-typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.amare-typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+/* Tarjeta de resumen final */
+
+.amare-summary-card {
+  width: 100%;
+  align-self: stretch;
+
+  background: var(--amare-white);
+  border: 1px solid rgba(216, 195, 189, 0.75);
+  border-radius: 22px;
+
+  padding: 17px;
+  box-shadow: 0 12px 32px rgba(73, 88, 103, 0.1);
+
+  animation: amareMessageIn 0.25s ease;
+}
+
+.amare-summary-card[hidden] {
+  display: none !important;
+}
+
+.amare-summary-card h4 {
+  margin: 0 0 6px;
+
+  color: var(--amare-text);
+  font-family: "Playfair Display", serif;
+  font-size: 1.14rem;
+}
+
+.amare-summary-card > p {
+  margin: 0 0 15px;
+
+  color: var(--amare-muted);
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.amare-summary-list {
+  display: grid;
+  gap: 9px;
+  margin-bottom: 16px;
+}
+
+.amare-summary-item {
+  padding: 10px 11px;
+  border-radius: 13px;
+  background: #faf5f3;
+
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.amare-summary-item strong {
+  color: var(--amare-blue);
+}
+
+.amare-summary-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.amare-summary-btn {
+  min-height: 42px;
+
+  border: none;
+  border-radius: 13px;
+
+  padding: 10px 12px;
+
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.79rem;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.amare-summary-btn:hover {
+  transform: translateY(-2px);
+}
+
+.amare-summary-btn.quote {
+  background: var(--amare-blue);
+  color: var(--amare-white);
+}
+
+.amare-summary-btn.whatsapp {
+  background: #e7f7ec;
+  color: #246b3c;
+}
+
+.amare-summary-btn.modify {
+  grid-column: 1 / -1;
+
+  background: var(--amare-rose-light);
+  color: var(--amare-text);
+}
+
+/* Formulario inferior */
+
+.amare-chat-form {
+  padding: 13px;
+  background: var(--amare-white);
+  border-top: 1px solid rgba(216, 195, 189, 0.58);
+
+  display: flex;
+  align-items: flex-end;
+  gap: 9px;
+}
+
+.amare-chat-input {
+  flex: 1;
+  resize: none;
+
+  min-height: 46px;
+  max-height: 110px;
+
+  border: 1px solid rgba(73, 88, 103, 0.2);
+  border-radius: 16px;
+
+  padding: 12px 14px;
+
+  background: #fbfaf9;
+  color: var(--amare-text);
+
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.87rem;
+  line-height: 1.45;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.amare-chat-input:focus {
+  border-color: var(--amare-blue);
+  box-shadow: 0 0 0 3px rgba(73, 88, 103, 0.1);
+}
+
+.amare-chat-input::placeholder {
+  color: #a1948d;
+}
+
+.amare-chat-send {
+  width: 46px;
+  height: 46px;
+
+  border: none;
+  border-radius: 15px;
+
+  background: var(--amare-blue);
+  color: var(--amare-white);
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 20px;
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.amare-chat-send:hover {
+  transform: translateY(-2px);
+}
+
+.amare-chat-send:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Animaciones */
+
+@keyframes amareMessageIn {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes amareTyping {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+
+  30% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+}
+
+/* Adaptación para celular */
+
+@media (max-width: 600px) {
+  .amare-chat-launcher {
+    right: 16px;
+    bottom: 16px;
+
+    width: 58px;
+    height: 58px;
+
+    font-size: 24px;
+  }
+
+  .amare-chat-widget {
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    max-width: none;
+    max-height: none;
+
+    border: none;
+    border-radius: 0;
+
+    transform: translateY(30px);
+    transform-origin: center;
+  }
+
+  .amare-chat-widget.is-open {
+    transform: translateY(0);
+  }
+
+  .amare-chat-header {
+    padding:
+      max(16px, env(safe-area-inset-top))
+      16px
+      14px;
+  }
+
+  .amare-chat-messages {
+    padding: 15px;
+  }
+
+  .amare-chat-form {
+    padding:
+      11px
+      11px
+      max(11px, env(safe-area-inset-bottom));
+  }
+
+  .amare-message {
+    max-width: 89%;
+  }
+}
+
+/* Evita que el contenido de atrás se desplace en celular */
+
+body.amare-chat-open {
+  overflow: hidden;
+}

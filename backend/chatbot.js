@@ -293,6 +293,89 @@ function isReadyForQuote(eventData) {
   );
 }
 
+
+
+function isExplicitConfirmation(message) {
+  const text = normalizeText(message).toLowerCase();
+
+  const negativeWords = [
+    "no",
+    "cambiar",
+    "cambio",
+    "modificar",
+    "incorrecto",
+    "corregir"
+  ];
+
+  const hasNegativeWord = negativeWords.some((word) =>
+    text.includes(word)
+  );
+
+  if (hasNegativeWord) {
+    return false;
+  }
+
+  const confirmations = [
+    "si",
+    "sí",
+    "correcto",
+    "confirmo",
+    "confirmado",
+    "todo correcto",
+    "está bien",
+    "esta bien",
+    "perfecto",
+    "listo",
+    "dale",
+    "ok",
+    "okay"
+  ];
+
+  return confirmations.some((confirmation) =>
+    text.includes(confirmation)
+  );
+}
+
+function buildEventSummary(eventData) {
+  const services =
+    Array.isArray(eventData.servicios) &&
+    eventData.servicios.length > 0
+      ? eventData.servicios.join(", ")
+      : "Por definir";
+
+  return [
+    "¡Perfecto! ✨ Antes de continuar, revisa el resumen de tu evento:",
+    "",
+    `• Tipo de evento: ${eventData.tipo_evento || "Por definir"}`,
+    `• Fecha: ${eventData.fecha || "Por definir"}`,
+    `• Ubicación: ${eventData.ubicacion || "Por definir"}`,
+    `• Invitados: ${eventData.invitados ?? "Por definir"}`,
+    `• Presupuesto: ${
+      eventData.presupuesto
+        ? `$${eventData.presupuesto}`
+        : "Por definir"
+    }`,
+    `• Estilo: ${eventData.estilo || "Por definir"}`,
+    `• Servicios: ${services}`,
+    "",
+    "¿Todo está correcto? Puedes responder “sí” o indicarme qué deseas modificar."
+  ].join("\n");
+}
+
+function buildSummary(eventData) {
+  return [
+    "¡Perfecto! Antes de continuar revisa este resumen:",
+    "",
+    `• Evento: ${eventData.tipo_evento}`,
+    `• Fecha: ${eventData.fecha}`,
+    `• Lugar: ${eventData.ubicacion}`,
+    `• Invitados: ${eventData.invitados}`,
+    `• Presupuesto: $${eventData.presupuesto}`,
+    "",
+    "¿Todo está correcto?"
+  ].join("\n");
+}
+
 module.exports = function registerChatbotRoutes(app, { listRecords }) {
   if (!app || typeof app.post !== "function") {
     throw new Error("No se recibió una aplicación Express válida.");
@@ -323,6 +406,25 @@ module.exports = function registerChatbotRoutes(app, { listRecords }) {
     const model = process.env.OPENROUTER_MODEL || DEFAULT_MODEL;
     const history = normalizeHistory(req.body?.history, message);
     const currentEventData = normalizeEventData(req.body?.eventData);
+const awaitingConfirmation = Boolean(
+  req.body?.awaitingConfirmation
+);
+
+if (
+  awaitingConfirmation &&
+  isReadyForQuote(currentEventData) &&
+  isExplicitConfirmation(message)
+) {
+  return res.json({
+    response:
+      "¡Perfecto! Tu información ha sido confirmada. Ya puedes solicitar la cotización o escribirnos por WhatsApp. ✨",
+    eventData: currentEventData,
+    awaitingConfirmation: false,
+    confirmedByClient: true,
+    readyForQuote: true,
+    model
+  });
+}
 
     try {
       const knowledge = await getAmareKnowledge(listRecords);
@@ -386,14 +488,28 @@ ${message}
         assistantResult.eventData
       );
 
-      const readyForQuote = isReadyForQuote(mergedEventData);
+const readyForQuote = isReadyForQuote(mergedEventData);
 
-      return res.json({
-        response: assistantResult.response,
-        eventData: mergedEventData,
-        readyForQuote,
-        model: openRouterResponse.data?.model || model
-      });
+if (readyForQuote) {
+  return res.json({
+    response: buildEventSummary(mergedEventData),
+    eventData: mergedEventData,
+    awaitingConfirmation: true,
+    confirmedByClient: false,
+    readyForQuote: false,
+    model: openRouterResponse.data?.model || model
+  });
+}
+
+return res.json({
+  response: assistantResult.response,
+  eventData: mergedEventData,
+  awaitingConfirmation: false,
+  confirmedByClient: false,
+  readyForQuote: false,
+  model: openRouterResponse.data?.model || model
+});
+
     } catch (error) {
       const providerStatus = error.response?.status;
 
