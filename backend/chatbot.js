@@ -10,6 +10,38 @@ function normalizeText(value, maxLength = 500) {
   return String(value).replace(/\s+/g, " ").trim().slice(0, maxLength);
 }
 
+function normalizeNumber(value) {
+  if (value === null || value === undefined || value === "") return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+}
+
+function normalizeStringArray(value) {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => normalizeText(item, 120))
+    .filter(Boolean)
+    .slice(0, 20);
+}
+
+function normalizeEventData(value = {}) {
+  const data =
+    value && typeof value === "object" && !Array.isArray(value)
+      ? value
+      : {};
+
+  return {
+    tipo_evento: normalizeText(data.tipo_evento, 120),
+    fecha: normalizeText(data.fecha, 120),
+    ubicacion: normalizeText(data.ubicacion, 160),
+    invitados: normalizeNumber(data.invitados),
+    presupuesto: normalizeNumber(data.presupuesto),
+    estilo: normalizeText(data.estilo, 160),
+    servicios: normalizeStringArray(data.servicios),
+    observaciones: normalizeText(data.observaciones, 600)
+  };
+}
+
 function normalizeHistory(history, currentMessage) {
   if (!Array.isArray(history)) return [];
 
@@ -50,7 +82,6 @@ function formatPrice(value) {
   if (value === "" || value === null || value === undefined) {
     return "precio no especificado";
   }
-
   return `precio base: ${normalizeText(value, 80)}`;
 }
 
@@ -80,7 +111,6 @@ async function getAmareKnowledge(listRecords) {
       const nombre = normalizeText(item.nombre_servicio, 120) || "Servicio";
       const descripcion = normalizeText(item.descripcion, 350);
       const precio = formatPrice(item.precio_base);
-
       return [nombre, descripcion, precio].filter(Boolean).join(" — ");
     }),
     "",
@@ -105,7 +135,6 @@ async function getAmareKnowledge(listRecords) {
     formatList("Tipos de evento disponibles", tiposEvento, (item) => {
       const nombre = normalizeText(item.nombre_tipo, 120) || "Tipo de evento";
       const descripcion = normalizeText(item.descripcion, 350);
-
       return [nombre, descripcion].filter(Boolean).join(" — ");
     })
   ].join("\n");
@@ -123,18 +152,44 @@ REGLAS OBLIGATORIAS:
 - No inventes precios, servicios, promociones, fechas disponibles, reservas ni condiciones.
 - Cuando falte un dato, indica que debe confirmarlo el equipo humano de AMARÉ.
 - Haz máximo una o dos preguntas por respuesta.
-- Recopila progresivamente: tipo de evento, fecha, cantidad de invitados, ubicación, presupuesto y servicios deseados.
+- Recopila progresivamente: tipo de evento, fecha, cantidad de invitados, ubicación, presupuesto, estilo y servicios deseados.
+- Acepta respuestas breves como "40", "sí", "no", "500" o "Cuenca" usando el contexto de la conversación.
+- Si el cliente cambia un dato, reemplaza el valor anterior por el nuevo.
 - No solicites datos sensibles ni información de pago.
 - No confirmes reservas ni pagos.
 - Si ya hay suficiente información, resume la solicitud y recomienda continuar por el formulario de cotización o WhatsApp.
-- Mantén las respuestas breves y útiles, normalmente entre 2 y 5 párrafos cortos.
-- Evita mencionar que eres un modelo de lenguaje, OpenRouter o Airtable.
-- Si la consulta no está relacionada con AMARÉ o con la organización de eventos, redirígela amablemente al tema.
-- Nunca termines una respuesta dejando una frase, pregunta o lista incompleta.
-- Formula respuestas breves pero completas.
-- No utilices Markdown.
-- No uses **negritas**, # títulos, listas Markdown ni código.
+- Mantén las respuestas breves y completas.
+- Nunca termines una frase, pregunta o lista de forma incompleta.
+- No menciones OpenRouter, Airtable ni que eres un modelo de lenguaje.
+- No utilices Markdown, negritas con asteriscos, títulos con #, bloques de código ni texto antes o después del JSON.
+- Si la consulta no está relacionada con AMARÉ o con la organización de eventos, redirígela amablemente.
 
+FORMATO OBLIGATORIO:
+
+Devuelve exclusivamente un objeto JSON válido con esta estructura:
+
+{
+  "response": "Mensaje breve y completo que verá el cliente",
+  "eventData": {
+    "tipo_evento": "",
+    "fecha": "",
+    "ubicacion": "",
+    "invitados": null,
+    "presupuesto": null,
+    "estilo": "",
+    "servicios": [],
+    "observaciones": ""
+  }
+}
+
+REGLAS PARA eventData:
+- Conserva los datos de la ficha actual.
+- Actualiza solamente los datos nuevos o corregidos.
+- No inventes información.
+- Usa null cuando invitados o presupuesto todavía no se conozcan.
+- Usa texto vacío cuando un dato textual todavía no se conozca.
+- Usa una lista vacía cuando todavía no existan servicios.
+- response debe incluir máximo dos preguntas.
 
 ${knowledge}
 `.trim();
@@ -157,6 +212,87 @@ function extractResponseText(data) {
   return "";
 }
 
+function parseAssistantResult(text, fallbackEventData = {}) {
+  if (!text) {
+    throw new Error("La IA no devolvió contenido.");
+  }
+
+  const cleanedText = text
+    .replace(/```json/gi, "")
+    .replace(/```/g, "")
+    .trim();
+
+  const firstBrace = cleanedText.indexOf("{");
+  const lastBrace = cleanedText.lastIndexOf("}");
+
+  if (firstBrace === -1 || lastBrace === -1 || lastBrace <= firstBrace) {
+    console.warn(
+      "La IA no devolvió JSON reconocible. Se conservará la ficha actual."
+    );
+
+    return {
+      response: cleanedText,
+      eventData: normalizeEventData(fallbackEventData)
+    };
+  }
+
+  const jsonText = cleanedText.slice(firstBrace, lastBrace + 1);
+
+  try {
+    const parsed = JSON.parse(jsonText);
+
+    return {
+      response:
+        typeof parsed.response === "string" && parsed.response.trim()
+          ? parsed.response.trim()
+          : "Cuéntame un poco más sobre el evento que deseas organizar.",
+      eventData: normalizeEventData(parsed.eventData)
+    };
+  } catch (error) {
+    console.error("JSON inválido recibido:", jsonText);
+
+    return {
+      response:
+        "No pude interpretar completamente la respuesta. Cuéntame de nuevo el último dato para continuar.",
+      eventData: normalizeEventData(fallbackEventData)
+    };
+  }
+}
+
+function mergeEventData(currentEventData, newEventData) {
+  const current = normalizeEventData(currentEventData);
+  const incoming = normalizeEventData(newEventData);
+
+  return {
+    tipo_evento: incoming.tipo_evento || current.tipo_evento,
+    fecha: incoming.fecha || current.fecha,
+    ubicacion: incoming.ubicacion || current.ubicacion,
+    invitados:
+      incoming.invitados !== null ? incoming.invitados : current.invitados,
+    presupuesto:
+      incoming.presupuesto !== null
+        ? incoming.presupuesto
+        : current.presupuesto,
+    estilo: incoming.estilo || current.estilo,
+    servicios: incoming.servicios.length
+      ? incoming.servicios
+      : current.servicios,
+    observaciones: incoming.observaciones || current.observaciones
+  };
+}
+
+function isReadyForQuote(eventData) {
+  return Boolean(
+    eventData.tipo_evento &&
+      eventData.fecha &&
+      eventData.ubicacion &&
+      Number.isFinite(eventData.invitados) &&
+      eventData.invitados > 0 &&
+      Number.isFinite(eventData.presupuesto) &&
+      eventData.presupuesto > 0
+  );
+}
+
 module.exports = function registerChatbotRoutes(app, { listRecords }) {
   if (!app || typeof app.post !== "function") {
     throw new Error("No se recibió una aplicación Express válida.");
@@ -169,11 +305,11 @@ module.exports = function registerChatbotRoutes(app, { listRecords }) {
   app.post("/api/chat", async (req, res) => {
     const message = normalizeText(req.body?.message, MAX_MESSAGE_LENGTH);
 
-   if (!message) {
-  return res.status(400).json({
-    error: "Escribe un mensaje antes de continuar."
-  });
-}
+    if (!message) {
+      return res.status(400).json({
+        error: "Escribe un mensaje antes de continuar."
+      });
+    }
 
     const apiKey = process.env.OPENROUTER_API_KEY;
 
@@ -186,6 +322,7 @@ module.exports = function registerChatbotRoutes(app, { listRecords }) {
 
     const model = process.env.OPENROUTER_MODEL || DEFAULT_MODEL;
     const history = normalizeHistory(req.body?.history, message);
+    const currentEventData = normalizeEventData(req.body?.eventData);
 
     try {
       const knowledge = await getAmareKnowledge(listRecords);
@@ -203,7 +340,13 @@ module.exports = function registerChatbotRoutes(app, { listRecords }) {
             ...history,
             {
               role: "user",
-              content: message
+              content: `
+FICHA ACTUAL DEL EVENTO:
+${JSON.stringify(currentEventData, null, 2)}
+
+NUEVO MENSAJE DEL CLIENTE:
+${message}
+`.trim()
             }
           ],
           temperature: 0.3,
@@ -219,9 +362,13 @@ module.exports = function registerChatbotRoutes(app, { listRecords }) {
           timeout: 60000
         }
       );
-console.log(
-  JSON.stringify(openRouterResponse.data, null, 2)
-);
+
+      console.log(
+        "Modelo:",
+        openRouterResponse.data?.model,
+        "| Estado:",
+        openRouterResponse.data?.choices?.[0]?.finish_reason
+      );
 
       const responseText = extractResponseText(openRouterResponse.data);
 
@@ -229,8 +376,22 @@ console.log(
         throw new Error("OpenRouter no devolvió texto.");
       }
 
+      const assistantResult = parseAssistantResult(
+        responseText,
+        currentEventData
+      );
+
+      const mergedEventData = mergeEventData(
+        currentEventData,
+        assistantResult.eventData
+      );
+
+      const readyForQuote = isReadyForQuote(mergedEventData);
+
       return res.json({
-        response: responseText,
+        response: assistantResult.response,
+        eventData: mergedEventData,
+        readyForQuote,
         model: openRouterResponse.data?.model || model
       });
     } catch (error) {

@@ -4,21 +4,37 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Asistente AMARÉ | Crea tu evento</title>
-  <meta name="description" content="Asistente virtual AMARÉ para orientar eventos y recomendar servicios y paquetes disponibles." />
-  <link rel="preconnect" href="https://images.unsplash.com">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <meta
+    name="description"
+    content="Asistente virtual AMARÉ para orientar eventos y recomendar servicios y paquetes disponibles."
+  />
+
+  <link rel="preconnect" href="https://images.unsplash.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/chatbot-ai.css" />
 </head>
+
 <body>
   <header class="site-header">
     <a href="index.html" class="brand">
       <span class="brand-mark">A</span>
       <span class="brand-text">AMARÉ</span>
     </a>
-    <button class="menu-toggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+
+    <button class="menu-toggle" type="button" aria-label="Abrir menú">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
     <nav class="main-nav">
       <a href="index.html">Inicio</a>
       <a href="servicios.html">Servicios</a>
@@ -32,14 +48,22 @@
   <main>
     <section class="page-hero">
       <p class="eyebrow reveal">Asistente virtual</p>
-      <h1 class="reveal">Conversemos sobre el evento que tienes en mente.</h1>
-      <p class="reveal">Cuéntanos tu idea y el asistente te orientará usando los servicios, paquetes y tipos de evento disponibles en AMARÉ.</p>
+
+      <h1 class="reveal">
+        Conversemos sobre el evento que tienes en mente.
+      </h1>
+
+      <p class="reveal">
+        Cuéntanos tu idea y el asistente te orientará usando los servicios,
+        paquetes y tipos de evento disponibles en AMARÉ.
+      </p>
     </section>
 
     <section class="section chatbot-layout">
       <div class="chat-panel reveal">
         <div class="chat-header">
           <span class="brand-mark small">A</span>
+
           <div>
             <h2>Asistente AMARÉ</h2>
             <p class="chat-status">En línea · Orientación inicial</p>
@@ -52,10 +76,72 @@
           aria-live="polite"
           aria-label="Conversación con el asistente AMARÉ"
         >
-          <div class="message bot">Hola, soy el asistente AMARÉ. Cuéntame qué evento quieres organizar y te ayudaré a encontrar una opción adecuada.</div>
+          <div class="message bot">
+            Hola, soy el asistente AMARÉ. Cuéntame qué evento quieres organizar
+            y te ayudaré a encontrar una opción adecuada.
+          </div>
         </div>
 
+        <section
+          class="event-summary"
+          id="eventSummary"
+          aria-labelledby="eventSummaryTitle"
+          hidden
+        >
+          <div class="event-summary-header">
+            <div>
+              <p class="event-summary-eyebrow">Resumen preliminar</p>
+              <h3 id="eventSummaryTitle">Tu evento con AMARÉ</h3>
+            </div>
+
+            <span id="quoteStatus" class="quote-status">
+              Completando datos
+            </span>
+          </div>
+
+          <div class="event-summary-grid">
+            <div class="event-summary-item">
+              <span>Tipo de evento</span>
+              <strong id="summaryEventType">Pendiente</strong>
+            </div>
+
+            <div class="event-summary-item">
+              <span>Fecha</span>
+              <strong id="summaryDate">Pendiente</strong>
+            </div>
+
+            <div class="event-summary-item">
+              <span>Ubicación</span>
+              <strong id="summaryLocation">Pendiente</strong>
+            </div>
+
+            <div class="event-summary-item">
+              <span>Invitados</span>
+              <strong id="summaryGuests">Pendiente</strong>
+            </div>
+
+            <div class="event-summary-item">
+              <span>Presupuesto</span>
+              <strong id="summaryBudget">Pendiente</strong>
+            </div>
+
+            <div class="event-summary-item">
+              <span>Estilo</span>
+              <strong id="summaryStyle">Por definir</strong>
+            </div>
+          </div>
+
+          <div class="event-summary-services">
+            <span>Servicios de interés</span>
+            <strong id="summaryServices">Por definir</strong>
+          </div>
+        </section>
+
         <form class="chat-form" id="aiChatForm">
+          <label class="visually-hidden" for="aiChatInput">
+            Escribe tu mensaje para el asistente
+          </label>
+
           <input
             id="aiChatInput"
             type="text"
@@ -63,21 +149,28 @@
             autocomplete="off"
             placeholder="Ej. Quiero un cumpleaños elegante para 30 personas..."
             required
-          >
+          />
+
           <button id="aiChatButton" type="submit">Enviar</button>
         </form>
       </div>
 
       <div class="chat-info reveal">
         <p class="eyebrow">¿Cómo te ayuda?</p>
+
         <h2>Una primera guía para darle forma a tu evento.</h2>
+
         <ul class="check-list">
           <li>Comprende el tipo de evento y el estilo que buscas.</li>
           <li>Pregunta fecha, invitados, ubicación y presupuesto.</li>
           <li>Consulta los servicios y paquetes registrados por AMARÉ.</li>
           <li>Te orienta hacia una cotización o conversación por WhatsApp.</li>
         </ul>
-        <p>Las reservas, disponibilidad y pagos siempre deben ser confirmados por el equipo humano de AMARÉ.</p>
+
+        <p>
+          Las reservas, disponibilidad y pagos siempre deben ser confirmados por
+          el equipo humano de AMARÉ.
+        </p>
       </div>
     </section>
   </main>
@@ -85,15 +178,26 @@
   <footer class="site-footer">
     <div>
       <h2>AMARÉ</h2>
-      <p>La tecnología orienta; nuestro equipo convierte tu idea en una experiencia real.</p>
+      <p>
+        La tecnología orienta; nuestro equipo convierte tu idea en una
+        experiencia real.
+      </p>
     </div>
+
     <div>
       <p>¿Ya tienes los detalles?</p>
       <a href="cotiza.html">Solicita una cotización</a>
     </div>
   </footer>
 
-  <a class="whatsapp-float" href="https://wa.me/593958892936?text=Hola%20AMAR%C3%89%2C%20quiero%20informaci%C3%B3n%20sobre%20eventos." target="_blank" rel="noopener">WhatsApp</a>
+  <a
+    class="whatsapp-float"
+    href="https://wa.me/593958892936?text=Hola%20AMAR%C3%89%2C%20quiero%20informaci%C3%B3n%20sobre%20eventos."
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    WhatsApp
+  </a>
 
   <script src="js/script.js"></script>
   <script src="js/chatbot-ai.js"></script>

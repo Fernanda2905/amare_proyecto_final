@@ -5,7 +5,32 @@ const aiChatWindow = document.querySelector("#aiChatWindow");
 const aiChatInput = document.querySelector("#aiChatInput");
 const aiChatButton = document.querySelector("#aiChatButton");
 
+const eventSummary = document.querySelector("#eventSummary");
+const quoteStatus = document.querySelector("#quoteStatus");
+
+const summaryEventType = document.querySelector("#summaryEventType");
+const summaryDate = document.querySelector("#summaryDate");
+const summaryLocation = document.querySelector("#summaryLocation");
+const summaryGuests = document.querySelector("#summaryGuests");
+const summaryBudget = document.querySelector("#summaryBudget");
+const summaryStyle = document.querySelector("#summaryStyle");
+const summaryServices = document.querySelector("#summaryServices");
+
 const conversationHistory = [];
+
+let currentEventData = {
+  tipo_evento: "",
+  fecha: "",
+  ubicacion: "",
+  invitados: null,
+  presupuesto: null,
+  estilo: "",
+  servicios: [],
+  observaciones: ""
+};
+
+let currentReadyForQuote = false;
+
 const MAX_HISTORY_MESSAGES = 30;
 
 if (aiChatForm && aiChatWindow && aiChatInput && aiChatButton) {
@@ -17,14 +42,15 @@ async function handleChatSubmit(event) {
 
   const userText = aiChatInput.value.trim();
 
-if (!userText) {
-  addChatMessage("Escribe un mensaje antes de continuar.", "error");
-  return;
-}
+  if (!userText) {
+    addChatMessage("Escribe un mensaje antes de continuar.", "error");
+    return;
+  }
 
   const previousHistory = [...conversationHistory];
 
   addChatMessage(userText, "user");
+
   conversationHistory.push({
     role: "user",
     content: userText
@@ -48,7 +74,8 @@ if (!userText) {
       },
       body: JSON.stringify({
         message: userText,
-        history: previousHistory
+        history: previousHistory,
+        eventData: currentEventData
       })
     });
 
@@ -62,37 +89,54 @@ if (!userText) {
       throw error;
     }
 
-    if (!data.response) {
+    if (typeof data.response !== "string" || !data.response.trim()) {
       throw new Error("La API no devolvió una respuesta válida.");
     }
 
+    if (data.eventData && typeof data.eventData === "object") {
+      currentEventData = {
+        ...currentEventData,
+        ...data.eventData,
+        servicios: Array.isArray(data.eventData.servicios)
+          ? data.eventData.servicios
+          : currentEventData.servicios
+      };
+
+      currentReadyForQuote = Boolean(data.readyForQuote);
+
+      console.log("Ficha actual del evento:", currentEventData);
+      console.log("Lista para cotizar:", currentReadyForQuote);
+
+      updateEventSummary(currentReadyForQuote);
+    }
+
     loadingMessage.remove();
-    addChatMessage(
-    cleanBotText(data.response),
-    "bot"
-);
+
+    const cleanResponse = cleanBotText(data.response);
+
+    addChatMessage(cleanResponse, "bot");
 
     conversationHistory.push({
       role: "assistant",
-      content: data.response
+      content: cleanResponse
     });
 
     trimHistory();
-} catch (error) {
-  loadingMessage.remove();
+  } catch (error) {
+    loadingMessage.remove();
 
-  const lastMessage = conversationHistory[conversationHistory.length - 1];
+    const lastMessage = conversationHistory[conversationHistory.length - 1];
 
-  if (
-    lastMessage &&
-    lastMessage.role === "user" &&
-    lastMessage.content === userText
-  ) {
-    conversationHistory.pop();
-  }
+    if (
+      lastMessage &&
+      lastMessage.role === "user" &&
+      lastMessage.content === userText
+    ) {
+      conversationHistory.pop();
+    }
 
-let userMessage =
-  "No puedo responderte en este momento. Intenta enviar el mensaje nuevamente.";
+    let userMessage =
+      "No puedo responderte en este momento. Intenta enviar el mensaje nuevamente.";
 
     if (error.status === 503) {
       userMessage =
@@ -138,11 +182,92 @@ function trimHistory() {
     );
   }
 }
+
 function cleanBotText(text) {
-  return text
+  return String(text)
     .replace(/\*\*(.*?)\*\*/g, "$1")
     .replace(/\*(.*?)\*/g, "$1")
     .replace(/`/g, "")
     .replace(/#{1,6}\s?/g, "")
     .trim();
+}
+
+function hasEventData() {
+  return Boolean(
+    currentEventData.tipo_evento ||
+      currentEventData.fecha ||
+      currentEventData.ubicacion ||
+      currentEventData.invitados !== null ||
+      currentEventData.presupuesto !== null ||
+      currentEventData.estilo ||
+      currentEventData.servicios?.length
+  );
+}
+
+function formatBudget(value) {
+  if (value === null || value === undefined || value === "") {
+    return "Pendiente";
+  }
+
+  const numericValue = Number(value);
+
+  if (Number.isNaN(numericValue)) {
+    return String(value);
+  }
+
+  return `$${numericValue.toLocaleString("es-EC")}`;
+}
+
+function updateEventSummary(readyForQuote = false) {
+  if (!eventSummary || !hasEventData()) {
+    return;
+  }
+
+  eventSummary.hidden = false;
+
+  if (summaryEventType) {
+    summaryEventType.textContent =
+      currentEventData.tipo_evento || "Pendiente";
+  }
+
+  if (summaryDate) {
+    summaryDate.textContent = currentEventData.fecha || "Pendiente";
+  }
+
+  if (summaryLocation) {
+    summaryLocation.textContent =
+      currentEventData.ubicacion || "Pendiente";
+  }
+
+  if (summaryGuests) {
+    summaryGuests.textContent =
+      currentEventData.invitados !== null &&
+      currentEventData.invitados !== undefined
+        ? `${currentEventData.invitados} personas`
+        : "Pendiente";
+  }
+
+  if (summaryBudget) {
+    summaryBudget.textContent = formatBudget(currentEventData.presupuesto);
+  }
+
+  if (summaryStyle) {
+    summaryStyle.textContent = currentEventData.estilo || "Por definir";
+  }
+
+  if (summaryServices) {
+    summaryServices.textContent =
+      Array.isArray(currentEventData.servicios) &&
+      currentEventData.servicios.length
+        ? currentEventData.servicios.join(", ")
+        : "Por definir";
+  }
+
+  if (quoteStatus) {
+    quoteStatus.textContent = readyForQuote
+      ? "Lista para cotizar"
+      : "Completando datos";
+
+    quoteStatus.classList.toggle("ready", readyForQuote);
+  }
 }
