@@ -287,9 +287,7 @@ function isReadyForQuote(eventData) {
       eventData.fecha &&
       eventData.ubicacion &&
       Number.isFinite(eventData.invitados) &&
-      eventData.invitados > 0 &&
-      Number.isFinite(eventData.presupuesto) &&
-      eventData.presupuesto > 0
+      eventData.invitados > 0
   );
 }
 

@@ -343,12 +343,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     summaryCard.className = "amare-summary-card";
 
-    const type = getEventValue(eventData, [
-      "eventType",
-      "tipoEvento",
-      "tipo",
-      "event_type"
-    ]);
+const type = getEventValue(eventData, [
+  "tipo_evento",
+  "eventType",
+  "tipoEvento",
+  "tipo",
+  "event_type"
+]);
 
     const date = getEventValue(eventData, [
       "date",
@@ -498,25 +499,34 @@ document.addEventListener("DOMContentLoaded", () => {
     return "";
   }
 
-  function goToQuote() {
-    localStorage.setItem(
-      QUOTE_KEY,
-      JSON.stringify(state.eventData || {})
-    );
+function goToQuote() {
+  const quoteData = {
+    eventData: state.eventData || {},
+    history: Array.isArray(state.history)
+      ? state.history
+      : []
+  };
 
-    window.location.href = "cotiza.html?origen=chatbot";
-  }
+  localStorage.setItem(
+    QUOTE_KEY,
+    JSON.stringify(quoteData)
+  );
+
+  window.location.href = "cotiza.html?origen=chatbot";
+}
 
   function openWhatsApp() {
     const phone = "593958892936";
 
     const eventData = state.eventData || {};
 
-    const type = getEventValue(eventData, [
-      "eventType",
-      "tipoEvento",
-      "tipo"
-    ]);
+ const type = getEventValue(eventData, [
+  "tipo_evento",
+  "eventType",
+  "tipoEvento",
+  "tipo",
+  "event_type"
+]);
 
     const date = getEventValue(eventData, [
       "date",
