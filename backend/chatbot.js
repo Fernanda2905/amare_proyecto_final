@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 const OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions";
-const DEFAULT_MODEL = "openrouter/free";
+const DEFAULT_MODEL = "tencent/hy3";
 const MAX_HISTORY_MESSAGES = 30;
 const MAX_MESSAGE_LENGTH = 1000;
 
@@ -287,7 +287,12 @@ function isReadyForQuote(eventData) {
       eventData.fecha &&
       eventData.ubicacion &&
       Number.isFinite(eventData.invitados) &&
-      eventData.invitados > 0
+      eventData.invitados > 0 &&
+      Number.isFinite(eventData.presupuesto) &&
+      eventData.presupuesto > 0 &&
+      eventData.estilo &&
+      Array.isArray(eventData.servicios) &&
+      eventData.servicios.length > 0
   );
 }
 
